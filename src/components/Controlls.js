@@ -6,6 +6,25 @@ import PDF from "./PDF";
 const maxDistancePerDay = 800 * 1000;
 const maxPricePerDay = 1000;
 
+export const calculatePrice = (pricePerLiter, distance) => {
+  let totalPrice;
+  if (distance > maxDistancePerDay) {
+    const price = Math.floor(distance / maxDistancePerDay) * maxPricePerDay;
+    const remainingDistance = distance % maxDistancePerDay;
+    totalPrice = (pricePerLiter * (remainingDistance / 1000) + price) * 1.1;
+  } else {
+    totalPrice = pricePerLiter * (distance / 1000) * 1.1;
+  }
+  return totalPrice;
+};
+
+export const calculateTime = (time) => {
+  const days = Math.floor(time);
+  const hours = Math.floor((time - days) * 24);
+  const minutes = Math.floor(((time - days) * 24 - hours) * 60);
+  return { days, hours, minutes };
+};
+
 export default function Controlls({ directions }) {
   const [price, setPrice] = useState(0.1);
   const [fullPrice, setFullPrice] = useState(1);
@@ -20,12 +39,9 @@ export default function Controlls({ directions }) {
     //calculate time at the start
     const distance = route.distance.value;
     const time = distance / maxDistancePerDay;
-    const days = Math.floor(time);
-    const hours = Math.floor((time - days) * 24);
-    const minutes = Math.floor(((time - days) * 24 - hours) * 60);
-    setTime({ days, hours, minutes });
+    setTime(calculateTime(time));
 
-    //calculate price at the start
+    //calculate default price at the start
     const totalPrice = calculatePrice(distance, 0.1);
     setFullPrice(totalPrice.toFixed(2));
   }, [route.distance.value]);
@@ -36,22 +52,9 @@ export default function Controlls({ directions }) {
     if (!route) return;
 
     const distance = route.distance.value;
-
     const totalPrice = calculatePrice(distance, pricePerLiter);
 
     setFullPrice(totalPrice.toFixed(2));
-  };
-
-  const calculatePrice = (pricePerLiter, distance) => {
-    let totalPrice;
-    if (distance > maxDistancePerDay) {
-      const price = Math.floor(distance / maxDistancePerDay) * maxPricePerDay;
-      const remainingDistance = distance % maxDistancePerDay;
-      totalPrice = (pricePerLiter * (remainingDistance / 1000) + price) * 1.1;
-    } else {
-      totalPrice = pricePerLiter * (distance / 1000) * 1.1;
-    }
-    return totalPrice;
   };
 
   return (
@@ -89,7 +92,8 @@ export default function Controlls({ directions }) {
         <b>Distance:</b> {(route.distance.value / 1000).toFixed(2)} km
       </p>
       <p className="text-l text-slate-50 my-1">
-        <b>Time:</b> {time.days} days {time.hours} hours {time.minutes} minutes
+        <b>Time:</b> {time.days} days, {time.hours} hours, {time.minutes}{" "}
+        minutes
       </p>
       <p className="text-l text-slate-50 my-2">
         <b>Start address:</b> {route.end_address}

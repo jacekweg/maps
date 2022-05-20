@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { GoogleMap, DirectionsRenderer } from "@react-google-maps/api";
 import { Link } from "react-router-dom";
 import Controlls from "./Controlls";
-// const google = window.google;
+
 const equal = require("fast-deep-equal/es6/react");
 
 export default function Map({
