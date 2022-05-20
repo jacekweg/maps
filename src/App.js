@@ -4,7 +4,7 @@ import "./index.css";
 import Home from "./components/Home";
 import Map from "./components/Map";
 import Info from "./components/Info";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import { useLoadScript } from "@react-google-maps/api";
 
 function App() {
